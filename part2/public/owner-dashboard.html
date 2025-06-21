@@ -9,6 +9,14 @@
 </head>
 <body class="bg-light">
   <div id="app" class="container py-4">
+
+    <!-- Logout button -->
+    <div class="d-flex justify-content-end mb-3">
+      <form action="/logout" method="GET">
+        <button type="submit" class="btn btn-outline-danger">Logout</button>
+      </form>
+    </div>
+
     <h1 class="mb-4 text-primary">Owner Dashboard</h1>
 
     <!-- Walk request form -->
@@ -18,9 +26,15 @@
       </div>
       <div class="card-body">
         <form @submit.prevent="submitWalkRequest">
+          <!-- Dog dropdown -->
           <div class="mb-3">
-            <label class="form-label">Dog ID</label>
-            <input v-model="form.dog_id" type="number" class="form-control" required>
+            <label class="form-label">Dog</label>
+            <select v-model="form.dog_id" class="form-select" required>
+              <option disabled value="">Select a dog</option>
+              <option v-for="dog in dogs" :key="dog.dog_id" :value="dog.dog_id">
+                {{ dog.name }}
+              </option>
+            </select>
           </div>
           <div class="mb-3">
             <label class="form-label">Requested Date & Time</label>
@@ -39,7 +53,7 @@
       </div>
     </div>
 
-    <!-- Success or error messages -->
+    <!-- Messages -->
     <div v-if="message" class="alert alert-info">{{ message }}</div>
     <div v-if="error" class="alert alert-danger">{{ error }}</div>
 
@@ -64,6 +78,7 @@
     <p v-else>No walk requests yet.</p>
   </div>
 
+  <!-- Vue App Script -->
   <script>
     const { createApp, ref, onMounted } = Vue;
 
@@ -76,9 +91,22 @@
           location: ''
         });
 
+        const dogs = ref([]);
         const walks = ref([]);
         const message = ref('');
         const error = ref('');
+
+        const ownerId = 1;
+
+        async function loadDogs() {
+          try {
+            const res = await fetch(`/api/owners/${ownerId}/dogs`);
+            if (!res.ok) throw new Error('Failed to load dogs');
+            dogs.value = await res.json();
+          } catch (err) {
+            error.value = err.message;
+          }
+        }
 
         async function loadWalks() {
           try {
@@ -116,11 +144,13 @@
         }
 
         onMounted(() => {
+          loadDogs();
           loadWalks();
         });
 
         return {
           form,
+          dogs,
           walks,
           message,
           error,
