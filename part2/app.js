@@ -9,23 +9,22 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // To handle form POST data (from login form)
 
-// ✅ Session middleware setup
+
 app.use(session({
-  secret: 'yourSecretKey', // Changed this to a secure key in production
+  secret: 'yourSecretKey',
   resave: false,
   saveUninitialized: false
 }));
 
-// Serve static files
+
 app.use(express.static(path.join(__dirname, '/public')));
 
-// Routes
 const walkRoutes = require('./routes/walkRoutes');
 const userRoutes = require('./routes/userRoutes');
 
 app.use('/api/walks', walkRoutes);
 app.use('/api/users', userRoutes);
-app.use('/', userRoutes); // ✅ Ensure /login POST can be accessed from the form
+app.use('/', userRoutes);
 
 
 module.exports = app;
