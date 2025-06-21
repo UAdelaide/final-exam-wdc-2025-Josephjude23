@@ -1,13 +1,13 @@
 const express = require('express');
 const path = require('path');
-const session = require('express-session'); // ✅ Add this
+const session = require('express-session');
 require('dotenv').config();
 
 const app = express();
 
-// Middleware
+
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // To handle form POST data (from login form)
+app.use(express.urlencoded({ extended: true }));
 
 
 app.use(session({
