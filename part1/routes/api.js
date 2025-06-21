@@ -12,7 +12,7 @@ var pool = mysql.createPool({
   queueLimit: 0
 });
 
-//api/dogs route
+// /api/dogs route
 router.get('/dogs', async (req, res) => {
   try {
     const [rows] = await pool.query(`
